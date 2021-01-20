@@ -153,6 +153,24 @@ class MixWithOthersMessage {
   }
 }
 
+class LimitBitrateMessage {
+  int? limitBitrate;
+
+  // ignore: unused_element
+  Object encode() {
+    final Map<Object?, Object?> pigeonMap = <Object?, Object?>{};
+    pigeonMap['limitBitrate'] = limitBitrate;
+    return pigeonMap;
+  }
+
+  // ignore: unused_element
+  static LimitBitrateMessage decode(Object message) {
+    final Map<Object?, Object?> pigeonMap = message as Map<Object?, Object?>;
+    return LimitBitrateMessage()
+      ..limitBitrate = pigeonMap['limitBitrate'] as int;
+  }
+}
+
 class VideoPlayerApi {
   Future<void> initialize() async {
     const BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
@@ -408,6 +426,32 @@ class VideoPlayerApi {
     final Object encoded = arg.encode();
     const BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.VideoPlayerApi.setMixWithOthers',
+        StandardMessageCodec());
+    final Map<Object?, Object?>? replyMap =
+        await channel.send(encoded) as Map<Object?, Object?>?;
+    if (replyMap == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+        details: null,
+      );
+    } else if (replyMap['error'] != null) {
+      final Map<Object?, Object?> error =
+          replyMap['error'] as Map<Object?, Object?>;
+      throw PlatformException(
+        code: error['code'] as String,
+        message: error['message'] as String?,
+        details: error['details'],
+      );
+    } else {
+      // noop
+    }
+  }
+
+  Future<void> setLimitBitrate(LimitBitrateMessage arg) async {
+    final Object encoded = arg.encode();
+    const BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.VideoPlayerApi.setLimitBitrate',
         StandardMessageCodec());
     final Map<Object?, Object?>? replyMap =
         await channel.send(encoded) as Map<Object?, Object?>?;

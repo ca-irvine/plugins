@@ -37,6 +37,10 @@ class MixWithOthersMessage {
   bool mixWithOthers;
 }
 
+class LimitBitrateMessage {
+  int limitBitrate;
+}
+
 @HostApi(dartHostTestHandler: 'TestHostVideoPlayerApi')
 abstract class VideoPlayerApi {
   void initialize();
@@ -50,6 +54,7 @@ abstract class VideoPlayerApi {
   void seekTo(PositionMessage msg);
   void pause(TextureMessage msg);
   void setMixWithOthers(MixWithOthersMessage msg);
+  void setLimitBitrate(LimitBitrateMessage msg);
 }
 
 void configurePigeon(PigeonOptions opts) {
