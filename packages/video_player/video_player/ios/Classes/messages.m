@@ -184,6 +184,10 @@ static NSDictionary* wrapResult(NSDictionary *result, FlutterError *error) {
 @implementation FLTLimitBitrateMessage
 +(FLTLimitBitrateMessage*)fromMap:(NSDictionary*)dict {
   FLTLimitBitrateMessage* result = [[FLTLimitBitrateMessage alloc] init];
+  result.textureId = dict[@"textureId"];
+  if ((NSNull *)result.textureId == [NSNull null]) {
+    result.textureId = nil;
+  }
   result.limitBitrate = dict[@"limitBitrate"];
   if ((NSNull *)result.limitBitrate == [NSNull null]) {
     result.limitBitrate = nil;
@@ -191,7 +195,7 @@ static NSDictionary* wrapResult(NSDictionary *result, FlutterError *error) {
   return result;
 }
 -(NSDictionary*)toMap {
-  return [NSDictionary dictionaryWithObjectsAndKeys:(self.limitBitrate ? self.limitBitrate : [NSNull null]), @"limitBitrate", nil];
+  return [NSDictionary dictionaryWithObjectsAndKeys:(self.textureId ? self.textureId : [NSNull null]), @"textureId", (self.limitBitrate ? self.limitBitrate : [NSNull null]), @"limitBitrate", nil];
 }
 @end
 

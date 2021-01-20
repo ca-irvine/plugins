@@ -38,6 +38,7 @@ class MixWithOthersMessage {
 }
 
 class LimitBitrateMessage {
+  int textureId;
   int limitBitrate;
 }
 

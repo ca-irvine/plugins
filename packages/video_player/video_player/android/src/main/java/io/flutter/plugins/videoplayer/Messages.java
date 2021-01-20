@@ -305,6 +305,16 @@ public class Messages {
 
   /** Generated class from Pigeon that represents data sent in messages. */
   public static class LimitBitrateMessage {
+    private Long textureId;
+
+    public Long getTextureId() {
+      return textureId;
+    }
+
+    public void setTextureId(Long setterArg) {
+      this.textureId = setterArg;
+    }
+
     private Long limitBitrate;
 
     public Long getLimitBitrate() {
@@ -317,12 +327,18 @@ public class Messages {
 
     HashMap toMap() {
       HashMap<String, Object> toMapResult = new HashMap<>();
+      toMapResult.put("textureId", textureId);
       toMapResult.put("limitBitrate", limitBitrate);
       return toMapResult;
     }
 
     static LimitBitrateMessage fromMap(HashMap map) {
       LimitBitrateMessage fromMapResult = new LimitBitrateMessage();
+      Object textureId = map.get("textureId");
+      fromMapResult.textureId =
+          (textureId == null)
+              ? null
+              : ((textureId instanceof Integer) ? (Integer) textureId : (Long) textureId);
       Object limitBitrate = map.get("limitBitrate");
       fromMapResult.limitBitrate =
           (limitBitrate == null)

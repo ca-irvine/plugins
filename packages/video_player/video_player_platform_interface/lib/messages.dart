@@ -154,11 +154,13 @@ class MixWithOthersMessage {
 }
 
 class LimitBitrateMessage {
+  int? textureId;
   int? limitBitrate;
 
   // ignore: unused_element
   Object encode() {
     final Map<Object?, Object?> pigeonMap = <Object?, Object?>{};
+    pigeonMap['textureId'] = textureId;
     pigeonMap['limitBitrate'] = limitBitrate;
     return pigeonMap;
   }
@@ -167,6 +169,7 @@ class LimitBitrateMessage {
   static LimitBitrateMessage decode(Object message) {
     final Map<Object?, Object?> pigeonMap = message as Map<Object?, Object?>;
     return LimitBitrateMessage()
+      ..textureId = pigeonMap['textureId'] as int
       ..limitBitrate = pigeonMap['limitBitrate'] as int;
   }
 }

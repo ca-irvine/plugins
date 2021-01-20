@@ -52,6 +52,7 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 @interface FLTLimitBitrateMessage : NSObject
+@property(nonatomic, strong, nullable) NSNumber * textureId;
 @property(nonatomic, strong, nullable) NSNumber * limitBitrate;
 @end
 
