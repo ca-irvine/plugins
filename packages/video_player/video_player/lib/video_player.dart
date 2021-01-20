@@ -11,10 +11,11 @@ import 'package:flutter/services.dart';
 import 'package:meta/meta.dart';
 import 'package:video_player_platform_interface/video_player_platform_interface.dart';
 
+import 'src/closed_caption_file.dart';
+
 export 'package:video_player_platform_interface/video_player_platform_interface.dart'
     show DurationRange, DataSourceType, VideoFormat, VideoPlayerOptions;
 
-import 'src/closed_caption_file.dart';
 export 'src/closed_caption_file.dart';
 
 final VideoPlayerPlatform _videoPlayerPlatform = VideoPlayerPlatform.instance
@@ -520,6 +521,20 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
 
     value = value.copyWith(playbackSpeed: speed);
     await _applyPlaybackSpeed();
+  }
+
+  /// Sets the video limit bitrate
+  ///
+  /// Set limitBitrate to non-zero to indicate that the player should attempt
+  /// to limit item playback to that bit rate, expressed in bits per second.
+  /// If network bandwidth consumption cannot be lowered to meet
+  /// the limitBitrate, it will be reduced as much as possible while
+  /// continuing to play the item.
+  Future<void> setLimitBitrate(int limitBitrate) async {
+    if (_isDisposed) {
+      return;
+    }
+    await _videoPlayerPlatform.setLimitBitrate(_textureId, limitBitrate);
   }
 
   /// The closed caption based on the current [position] in the video.

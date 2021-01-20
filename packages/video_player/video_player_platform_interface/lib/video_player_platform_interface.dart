@@ -120,6 +120,11 @@ abstract class VideoPlayerPlatform {
     throw UnimplementedError('setMixWithOthers() has not been implemented.');
   }
 
+  /// Sets the video limit bitrate
+  Future<void> setLimitBitrate(int textureId, int limitBitrate) {
+    throw UnimplementedError('setLimitBitrate() has not been implemented.');
+  }
+
   // This method makes sure that VideoPlayer isn't implemented with `implements`.
   //
   // See class doc for more details on why implementing this class is forbidden.

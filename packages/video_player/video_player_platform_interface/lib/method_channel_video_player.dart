@@ -141,6 +141,15 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
     );
   }
 
+  @override
+  Future<void> setLimitBitrate(int textureId, int limitBitrate) {
+    return _api.setLimitBitrate(
+      LimitBitrateMessage()
+        ..textureId = textureId
+        ..limitBitrate = limitBitrate,
+    );
+  }
+
   EventChannel _eventChannelFor(int textureId) {
     return EventChannel('flutter.io/videoPlayer/videoEvents$textureId');
   }

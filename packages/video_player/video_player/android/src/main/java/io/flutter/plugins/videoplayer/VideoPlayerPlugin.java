@@ -205,6 +205,12 @@ public class VideoPlayerPlugin implements FlutterPlugin, VideoPlayerApi {
     options.mixWithOthers = arg.getMixWithOthers();
   }
 
+  @Override
+  public void setLimitBitrate(Messages.LimitBitrateMessage arg) {
+    VideoPlayer player = videoPlayers.get(arg.getTextureId());
+    player.setLimitBitrate(arg.getLimitBitrate());
+  }
+
   private interface KeyForAssetFn {
     String get(String asset);
   }

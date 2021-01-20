@@ -383,6 +383,10 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
   _player.rate = speed;
 }
 
+- (void)setLimitBitrate:(long)limitBitrate {
+  _player.currentItem.preferredPeakBitRate = limitBitrate;
+}
+
 - (CVPixelBufferRef)copyPixelBuffer {
   CMTime outputItemTime = [_videoOutput itemTimeForHostTime:CACurrentMediaTime()];
   if ([_videoOutput hasNewPixelBufferForItemTime:outputItemTime]) {
@@ -598,6 +602,12 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
   } else {
     [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback error:nil];
   }
+}
+
+- (void)setLimitBitrate:(FLTLimitBitrateMessage*)input
+                  error:(FlutterError**)error {
+    FLTVideoPlayer* player = _players[input.textureId];
+    [player setLimitBitrate:[input.limitBitrate longValue]];
 }
 
 @end
