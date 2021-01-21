@@ -40,6 +40,7 @@ class VideoPlayerValue {
     this.isBuffering = false,
     this.volume = 1.0,
     this.playbackSpeed = 1.0,
+    this.limitBitrate,
     this.errorDescription,
   });
 
@@ -86,6 +87,9 @@ class VideoPlayerValue {
   /// The current speed of the playback.
   final double playbackSpeed;
 
+  /// The limit bitrate.
+  final int? limitBitrate;
+
   /// A description of the error if present.
   ///
   /// If [hasError] is false this is [null].
@@ -130,6 +134,7 @@ class VideoPlayerValue {
     bool? isBuffering,
     double? volume,
     double? playbackSpeed,
+    int? limitBitrate,
     String? errorDescription,
   }) {
     return VideoPlayerValue(
@@ -144,6 +149,7 @@ class VideoPlayerValue {
       isBuffering: isBuffering ?? this.isBuffering,
       volume: volume ?? this.volume,
       playbackSpeed: playbackSpeed ?? this.playbackSpeed,
+      limitBitrate: limitBitrate ?? this.limitBitrate,
       errorDescription: errorDescription ?? this.errorDescription,
     );
   }
@@ -162,6 +168,7 @@ class VideoPlayerValue {
         'isBuffering: $isBuffering, '
         'volume: $volume, '
         'playbackSpeed: $playbackSpeed, '
+        'limitBitrate: $limitBitrate, '
         'errorDescription: $errorDescription)';
   }
 }
@@ -311,6 +318,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
           _applyLooping();
           _applyVolume();
           _applyPlayPause();
+          _applyLimitBitrate();
           break;
         case VideoEventType.completed:
           value = value.copyWith(isPlaying: false, position: value.duration);
@@ -454,6 +462,13 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     );
   }
 
+  Future<void> _applyLimitBitrate() async {
+    if (!value.isInitialized || value.limitBitrate == null || _isDisposed) {
+      return;
+    }
+    await _videoPlayerPlatform.setLimitBitrate(_textureId, value.limitBitrate!);
+  }
+
   /// The position in the current video.
   Future<Duration?> get position async {
     if (_isDisposed) {
@@ -531,10 +546,8 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   /// the limitBitrate, it will be reduced as much as possible while
   /// continuing to play the item.
   Future<void> setLimitBitrate(int limitBitrate) async {
-    if (_isDisposed) {
-      return;
-    }
-    await _videoPlayerPlatform.setLimitBitrate(_textureId, limitBitrate);
+    value = value.copyWith(limitBitrate: limitBitrate);
+    await _applyLimitBitrate();
   }
 
   /// The closed caption based on the current [position] in the video.
