@@ -185,6 +185,7 @@ public class VideoPlayerPlugin implements FlutterPlugin, VideoPlayerApi {
   public PositionMessage position(TextureMessage arg) {
     VideoPlayer player = videoPlayers.get(arg.getTextureId());
     PositionMessage result = new PositionMessage();
+    result.setTextureId(arg.getTextureId());
     result.setPosition(player.getPosition());
     player.sendBufferingUpdate();
     return result;
