@@ -50,6 +50,10 @@ static NSDictionary* wrapResult(NSDictionary *result, FlutterError *error) {
 +(FLTMixWithOthersMessage*)fromMap:(NSDictionary*)dict;
 -(NSDictionary*)toMap;
 @end
+@interface FLTLimitBitrateMessage ()
++(FLTLimitBitrateMessage*)fromMap:(NSDictionary*)dict;
+-(NSDictionary*)toMap;
+@end
 
 @implementation FLTTextureMessage
 +(FLTTextureMessage*)fromMap:(NSDictionary*)dict {
@@ -174,6 +178,24 @@ static NSDictionary* wrapResult(NSDictionary *result, FlutterError *error) {
 }
 -(NSDictionary*)toMap {
   return [NSDictionary dictionaryWithObjectsAndKeys:(self.mixWithOthers ? self.mixWithOthers : [NSNull null]), @"mixWithOthers", nil];
+}
+@end
+
+@implementation FLTLimitBitrateMessage
++(FLTLimitBitrateMessage*)fromMap:(NSDictionary*)dict {
+  FLTLimitBitrateMessage* result = [[FLTLimitBitrateMessage alloc] init];
+  result.textureId = dict[@"textureId"];
+  if ((NSNull *)result.textureId == [NSNull null]) {
+    result.textureId = nil;
+  }
+  result.limitBitrate = dict[@"limitBitrate"];
+  if ((NSNull *)result.limitBitrate == [NSNull null]) {
+    result.limitBitrate = nil;
+  }
+  return result;
+}
+-(NSDictionary*)toMap {
+  return [NSDictionary dictionaryWithObjectsAndKeys:(self.textureId ? self.textureId : [NSNull null]), @"textureId", (self.limitBitrate ? self.limitBitrate : [NSNull null]), @"limitBitrate", nil];
 }
 @end
 
@@ -357,6 +379,23 @@ void FLTVideoPlayerApiSetup(id<FlutterBinaryMessenger> binaryMessenger, id<FLTVi
         FlutterError *error;
         FLTMixWithOthersMessage *input = [FLTMixWithOthersMessage fromMap:message];
         [api setMixWithOthers:input error:&error];
+        callback(wrapResult(nil, error));
+      }];
+    }
+    else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  {
+    FlutterBasicMessageChannel *channel =
+      [FlutterBasicMessageChannel
+        messageChannelWithName:@"dev.flutter.pigeon.VideoPlayerApi.setLimitBitrate"
+        binaryMessenger:binaryMessenger];
+    if (api) {
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        FlutterError *error;
+        FLTLimitBitrateMessage *input = [FLTLimitBitrateMessage fromMap:message];
+        [api setLimitBitrate:input error:&error];
         callback(wrapResult(nil, error));
       }];
     }

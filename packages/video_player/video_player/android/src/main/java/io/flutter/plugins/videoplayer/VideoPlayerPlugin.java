@@ -185,6 +185,7 @@ public class VideoPlayerPlugin implements FlutterPlugin, VideoPlayerApi {
   public PositionMessage position(TextureMessage arg) {
     VideoPlayer player = videoPlayers.get(arg.getTextureId());
     PositionMessage result = new PositionMessage();
+    result.setTextureId(arg.getTextureId());
     result.setPosition(player.getPosition());
     player.sendBufferingUpdate();
     return result;
@@ -203,6 +204,12 @@ public class VideoPlayerPlugin implements FlutterPlugin, VideoPlayerApi {
   @Override
   public void setMixWithOthers(MixWithOthersMessage arg) {
     options.mixWithOthers = arg.getMixWithOthers();
+  }
+
+  @Override
+  public void setLimitBitrate(Messages.LimitBitrateMessage arg) {
+    VideoPlayer player = videoPlayers.get(arg.getTextureId());
+    player.setLimitBitrate(arg.getLimitBitrate());
   }
 
   private interface KeyForAssetFn {

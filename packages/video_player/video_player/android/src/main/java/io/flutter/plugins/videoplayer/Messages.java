@@ -303,6 +303,51 @@ public class Messages {
     }
   }
 
+  /** Generated class from Pigeon that represents data sent in messages. */
+  public static class LimitBitrateMessage {
+    private Long textureId;
+
+    public Long getTextureId() {
+      return textureId;
+    }
+
+    public void setTextureId(Long setterArg) {
+      this.textureId = setterArg;
+    }
+
+    private Long limitBitrate;
+
+    public Long getLimitBitrate() {
+      return limitBitrate;
+    }
+
+    public void setLimitBitrate(Long setterArg) {
+      this.limitBitrate = setterArg;
+    }
+
+    HashMap toMap() {
+      HashMap<String, Object> toMapResult = new HashMap<>();
+      toMapResult.put("textureId", textureId);
+      toMapResult.put("limitBitrate", limitBitrate);
+      return toMapResult;
+    }
+
+    static LimitBitrateMessage fromMap(HashMap map) {
+      LimitBitrateMessage fromMapResult = new LimitBitrateMessage();
+      Object textureId = map.get("textureId");
+      fromMapResult.textureId =
+          (textureId == null)
+              ? null
+              : ((textureId instanceof Integer) ? (Integer) textureId : (Long) textureId);
+      Object limitBitrate = map.get("limitBitrate");
+      fromMapResult.limitBitrate =
+          (limitBitrate == null)
+              ? null
+              : ((limitBitrate instanceof Integer) ? (Integer) limitBitrate : (Long) limitBitrate);
+      return fromMapResult;
+    }
+  }
+
   /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
   public interface VideoPlayerApi {
     void initialize();
@@ -326,6 +371,8 @@ public class Messages {
     void pause(TextureMessage arg);
 
     void setMixWithOthers(MixWithOthersMessage arg);
+
+    void setLimitBitrate(LimitBitrateMessage arg);
 
     /** Sets up an instance of `VideoPlayerApi` to handle messages through the `binaryMessenger` */
     static void setup(BinaryMessenger binaryMessenger, VideoPlayerApi api) {
@@ -581,6 +628,30 @@ public class Messages {
                   @SuppressWarnings("ConstantConditions")
                   MixWithOthersMessage input = MixWithOthersMessage.fromMap((HashMap) message);
                   api.setMixWithOthers(input);
+                  wrapped.put("result", null);
+                } catch (Exception exception) {
+                  wrapped.put("error", wrapError(exception));
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.VideoPlayerApi.setLimitBitrate",
+                new StandardMessageCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                HashMap<String, HashMap> wrapped = new HashMap<>();
+                try {
+                  @SuppressWarnings("ConstantConditions")
+                  LimitBitrateMessage input = LimitBitrateMessage.fromMap((HashMap) message);
+                  api.setLimitBitrate(input);
                   wrapped.put("result", null);
                 } catch (Exception exception) {
                   wrapped.put("error", wrapError(exception));

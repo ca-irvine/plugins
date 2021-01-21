@@ -56,6 +56,8 @@ final class VideoPlayer {
 
   private final VideoPlayerOptions options;
 
+  private final LimitBandWidthMeter bandWidthMeter;
+
   VideoPlayer(
       Context context,
       EventChannel eventChannel,
@@ -66,8 +68,9 @@ final class VideoPlayer {
     this.eventChannel = eventChannel;
     this.textureEntry = textureEntry;
     this.options = options;
+    this.bandWidthMeter = new LimitBandWidthMeter(context);
 
-    exoPlayer = new SimpleExoPlayer.Builder(context).build();
+    exoPlayer = new SimpleExoPlayer.Builder(context).setBandwidthMeter(bandWidthMeter).build();
 
     Uri uri = Uri.parse(dataSource);
 
@@ -257,6 +260,10 @@ final class VideoPlayer {
 
   void seekTo(int location) {
     exoPlayer.seekTo(location);
+  }
+
+  void setLimitBitrate(long limitBitrate) {
+    bandWidthMeter.limitBitrate = limitBitrate;
   }
 
   long getPosition() {

@@ -11,10 +11,11 @@ import 'package:flutter/services.dart';
 import 'package:meta/meta.dart';
 import 'package:video_player_platform_interface/video_player_platform_interface.dart';
 
+import 'src/closed_caption_file.dart';
+
 export 'package:video_player_platform_interface/video_player_platform_interface.dart'
     show DurationRange, DataSourceType, VideoFormat, VideoPlayerOptions;
 
-import 'src/closed_caption_file.dart';
 export 'src/closed_caption_file.dart';
 
 final VideoPlayerPlatform _videoPlayerPlatform = VideoPlayerPlatform.instance
@@ -39,6 +40,7 @@ class VideoPlayerValue {
     this.isBuffering = false,
     this.volume = 1.0,
     this.playbackSpeed = 1.0,
+    this.limitBitrate,
     this.errorDescription,
   });
 
@@ -85,6 +87,9 @@ class VideoPlayerValue {
   /// The current speed of the playback.
   final double playbackSpeed;
 
+  /// The limit bitrate.
+  final int? limitBitrate;
+
   /// A description of the error if present.
   ///
   /// If [hasError] is false this is [null].
@@ -129,6 +134,7 @@ class VideoPlayerValue {
     bool? isBuffering,
     double? volume,
     double? playbackSpeed,
+    int? limitBitrate,
     String? errorDescription,
   }) {
     return VideoPlayerValue(
@@ -143,6 +149,7 @@ class VideoPlayerValue {
       isBuffering: isBuffering ?? this.isBuffering,
       volume: volume ?? this.volume,
       playbackSpeed: playbackSpeed ?? this.playbackSpeed,
+      limitBitrate: limitBitrate ?? this.limitBitrate,
       errorDescription: errorDescription ?? this.errorDescription,
     );
   }
@@ -161,6 +168,7 @@ class VideoPlayerValue {
         'isBuffering: $isBuffering, '
         'volume: $volume, '
         'playbackSpeed: $playbackSpeed, '
+        'limitBitrate: $limitBitrate, '
         'errorDescription: $errorDescription)';
   }
 }
@@ -310,6 +318,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
           _applyLooping();
           _applyVolume();
           _applyPlayPause();
+          _applyLimitBitrate();
           break;
         case VideoEventType.completed:
           value = value.copyWith(isPlaying: false, position: value.duration);
@@ -453,6 +462,13 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     );
   }
 
+  Future<void> _applyLimitBitrate() async {
+    if (!value.isInitialized || value.limitBitrate == null || _isDisposed) {
+      return;
+    }
+    await _videoPlayerPlatform.setLimitBitrate(_textureId, value.limitBitrate!);
+  }
+
   /// The position in the current video.
   Future<Duration?> get position async {
     if (_isDisposed) {
@@ -520,6 +536,18 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
 
     value = value.copyWith(playbackSpeed: speed);
     await _applyPlaybackSpeed();
+  }
+
+  /// Sets the video limit bitrate
+  ///
+  /// Set limitBitrate to non-zero to indicate that the player should attempt
+  /// to limit item playback to that bit rate, expressed in bits per second.
+  /// If network bandwidth consumption cannot be lowered to meet
+  /// the limitBitrate, it will be reduced as much as possible while
+  /// continuing to play the item.
+  Future<void> setLimitBitrate(int limitBitrate) async {
+    value = value.copyWith(limitBitrate: limitBitrate);
+    await _applyLimitBitrate();
   }
 
   /// The closed caption based on the current [position] in the video.
